@@ -52,23 +52,10 @@ impl Clock {
             hours: hours_converted,
         }
     }
-    pub fn to_string(&self) -> String {
-        // display
-        let (hour, minute) = match (self.hours, self.minutes) {
-            (h, m) if h >= 10 && m >= 10 => (h.to_string(), m.to_string()),
-            (h, m) if h < 10 && m >= 10 => (String::from("0") + &h.to_string(), m.to_string()),
-            (h, m) if h >= 10 && m < 10 => (h.to_string(), String::from("0") + &m.to_string()),
-            (h, m) => (
-                String::from("0") + &h.to_string(),
-                String::from("0") + &m.to_string(),
-            ),
-        };
-        format!("{}:{}", hour, minute)
-    }
 }
 
 impl fmt::Display for Clock {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_string())
+        write!(f, "{:02}:{:02}", self.hours, self.minutes)
     }
 }
