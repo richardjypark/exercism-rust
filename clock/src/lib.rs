@@ -8,20 +8,62 @@ pub struct Clock {
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        //
-        Clock { hours, minutes }
+        let minute_hours = match minutes {
+            m if m >= 0 => m / 60,
+            m if m % 60 == 0 => m / 60,
+            m => m / 60 - 1,
+        };
+
+        let hours_converted = match (hours + minute_hours) % 24 {
+            h if h >= 0 => h,
+            h => 24 + h,
+        };
+
+        let minutes_converted = match (minutes) % 60 {
+            m if m >= 0 => m,
+            m => 60 + m,
+        };
+
+        Clock {
+            hours: hours_converted,
+            minutes: minutes_converted,
+        }
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        unimplemented!("Add {} minutes to existing Clock time", minutes);
+        let minute_hours = match minutes + self.minutes {
+            m if m >= 0 => m / 60,
+            m if m % 60 == 0 => m / 60,
+            m => m / 60 - 1,
+        };
+
+        let hours_converted = match (self.hours + minute_hours) % 24 {
+            h if h >= 0 => h,
+            h => 24 + h,
+        };
+
+        let minutes_converted = match (minutes + self.minutes) % 60 {
+            m if m >= 0 => m,
+            m => 60 + m,
+        };
+
+        Self {
+            minutes: minutes_converted,
+            hours: hours_converted,
+        }
     }
     pub fn to_string(&self) -> String {
-        let added_zero_hours = if self.hours < 10 { "0" } else { "" };
-        let added_zero_minutes = if self.minutes < 10 { "0" } else { "" };
-        format!(
-            "{}{}:{}{}",
-            added_zero_hours, self.hours, added_zero_minutes, self.minutes
-        )
+        // display
+        let (hour, minute) = match (self.hours, self.minutes) {
+            (h, m) if h >= 10 && m >= 10 => (h.to_string(), m.to_string()),
+            (h, m) if h < 10 && m >= 10 => (String::from("0") + &h.to_string(), m.to_string()),
+            (h, m) if h >= 10 && m < 10 => (h.to_string(), String::from("0") + &m.to_string()),
+            (h, m) => (
+                String::from("0") + &h.to_string(),
+                String::from("0") + &m.to_string(),
+            ),
+        };
+        format!("{}:{}", hour, minute)
     }
 }
 
